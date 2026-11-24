@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -29,6 +30,40 @@ class _LoginScreenState extends State<LoginScreen> {
     } on FirebaseAuthException catch (e) {
       setState(() {
         _errorMessage = e.message ?? 'Terjadi kesalahan saat login.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _loginWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final GoogleAuthProvider googleProvider = GoogleAuthProvider();
+      // Biar selalu muncul pilihan akun Google setiap kali klik login
+      googleProvider.setCustomParameters({'prompt': 'select_account'});
+
+      if (kIsWeb) {
+        await FirebaseAuth.instance.signInWithPopup(googleProvider);
+      } else {
+        await FirebaseAuth.instance.signInWithProvider(googleProvider);
+      }
+      // Jika berhasil, AuthWrapper otomatis pindah ke UserInfoScreen
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _errorMessage = e.message ?? 'Gagal login dengan Google.';
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Login dengan Google dibatalkan atau gagal.';
       });
     } finally {
       if (mounted) {
@@ -100,6 +135,26 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Text('Login'),
+              ),
+              const SizedBox(height: 16),
+              const Row(
+                children: [
+                  Expanded(child: Divider()),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('atau'),
+                  ),
+                  Expanded(child: Divider()),
+                ],
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: _isLoading ? null : _loginWithGoogle,
+                icon: const Icon(Icons.g_mobiledata, size: 28),
+                label: const Text('Login dengan Google'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
               ),
             ],
           ),
