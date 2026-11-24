@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_firebase/widgets/custom_app_bar.dart';
 
 class UserInfoScreen extends StatelessWidget {
   final User user;
@@ -13,8 +14,9 @@ class UserInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard User'),
+      appBar: CustomAppBar(
+        title: 'Dashboard User',
+        
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
