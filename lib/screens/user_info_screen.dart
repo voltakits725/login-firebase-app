@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_firebase/fcm_token_card.dart'; // <-- BARU
 import 'package:login_firebase/widgets/custom_app_bar.dart';
 
 class UserInfoScreen extends StatelessWidget {
@@ -16,7 +17,6 @@ class UserInfoScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Dashboard User',
-        
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -26,7 +26,7 @@ class UserInfoScreen extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -64,6 +64,8 @@ class UserInfoScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              const FcmTokenCard(), // <-- BARU (hapus 'const' jika constructor-nya non-const)
             ],
           ),
         ),
